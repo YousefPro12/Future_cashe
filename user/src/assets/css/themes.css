@@ -1,0 +1,18 @@
+/* Add these rules for theme-specific logos */
+.theme-red-logo {
+  display: none;
+}
+
+.theme-blue-logo {
+  display: none;
+}
+
+/* Show orange logo in red theme */
+:root.theme-red .theme-red-logo {
+  display: block;
+}
+
+/* Show blue logo in blue theme */
+:root.theme-blue .theme-blue-logo {
+  display: block;
+} 

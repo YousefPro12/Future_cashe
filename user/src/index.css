@@ -1,0 +1,272 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *), &.dark, html.dark &);
+
+@theme inline {
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+}
+
+/* Light theme - default (neutral) */
+:root {
+  --radius: 0.625rem;
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.145 0 0);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.145 0 0);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.145 0 0);
+  --primary: oklch(0.205 0 0);
+  --primary-foreground: oklch(0.985 0 0);
+  --secondary: oklch(0.97 0 0);
+  --secondary-foreground: oklch(0.205 0 0);
+  --muted: oklch(0.97 0 0);
+  --muted-foreground: oklch(0.556 0 0);
+  --accent: oklch(0.97 0 0);
+  --accent-foreground: oklch(0.205 0 0);
+  --destructive: oklch(0.577 0.245 27.325);
+  --border: oklch(0.922 0 0);
+  --input: oklch(0.922 0 0);
+  --ring: oklch(0.708 0 0);
+  --chart-1: oklch(0.646 0.222 41.116);
+  --chart-2: oklch(0.6 0.118 184.704);
+  --chart-3: oklch(0.398 0.07 227.392);
+  --chart-4: oklch(0.828 0.189 84.429);
+  --chart-5: oklch(0.769 0.188 70.08);
+  --sidebar: oklch(0.985 0 0);
+  --sidebar-foreground: oklch(0.145 0 0);
+  --sidebar-primary: oklch(0.205 0 0);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.97 0 0);
+  --sidebar-accent-foreground: oklch(0.205 0 0);
+  --sidebar-border: oklch(0.922 0 0);
+  --sidebar-ring: oklch(0.708 0 0);
+}
+
+/* Orange/Red theme - based on Lightcash red logo */
+:root.theme-red {
+  --radius: 0.625rem;
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.145 0 0);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.145 0 0);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.145 0 0);
+  /* Primary: Lightcash orange #fe6604 */
+  --primary: #fe6604;
+  --primary-foreground: #ffffff;
+  /* Secondary: Lightcash red #f42d4b */
+  --secondary: #f42d4b;
+  --secondary-foreground: #ffffff;
+  --muted: oklch(0.97 0 0);
+  --muted-foreground: oklch(0.556 0 0);
+  /* Accent: Lighter orange #fa4d24 */
+  --accent: #fa4d24;
+  --accent-foreground: #ffffff;
+  --destructive: oklch(0.577 0.245 27.325);
+  --border: oklch(0.922 0 0);
+  --input: oklch(0.922 0 0);
+  --ring: rgba(254, 102, 4, 0.3);
+  --chart-1: #fe6604;
+  --chart-2: #f73f35;
+  --chart-3: #f42d4b;
+  --chart-4: #fa4d24;
+  --chart-5: #f73f35;
+  --sidebar: oklch(0.985 0 0);
+  --sidebar-foreground: oklch(0.145 0 0);
+  --sidebar-primary: #fe6604;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #f42d4b;
+  --sidebar-accent-foreground: #ffffff;
+  --sidebar-border: oklch(0.922 0 0);
+  --sidebar-ring: rgba(254, 102, 4, 0.3);
+}
+
+/* Blue theme - based on Lightcash blue logo */
+:root.theme-blue {
+  --radius: 0.625rem;
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.145 0 0);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.145 0 0);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.145 0 0);
+  /* Primary: Lightcash blue #2f2cd8 */
+  --primary: #2f2cd8;
+  --primary-foreground: #ffffff;
+  /* Secondary: Darker blue */
+  --secondary: #1e1ca6;
+  --secondary-foreground: #ffffff;
+  --muted: oklch(0.97 0 0);
+  --muted-foreground: oklch(0.556 0 0);
+  --accent: #4d4bff;
+  --accent-foreground: #ffffff;
+  --destructive: oklch(0.577 0.245 27.325);
+  --border: oklch(0.922 0 0);
+  --input: oklch(0.922 0 0);
+  --ring: rgba(47, 44, 216, 0.3);
+  --chart-1: #2f2cd8;
+  --chart-2: #4d4bff;
+  --chart-3: #1e1ca6;
+  --chart-4: #6b68ff;
+  --chart-5: #3a36ff;
+  --sidebar: oklch(0.985 0 0);
+  --sidebar-foreground: oklch(0.145 0 0);
+  --sidebar-primary: #2f2cd8;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #1e1ca6;
+  --sidebar-accent-foreground: #ffffff;
+  --sidebar-border: oklch(0.922 0 0);
+  --sidebar-ring: rgba(47, 44, 216, 0.3);
+}
+
+/* Dark theme - applies to all themes when .dark class is present */
+.dark, html.dark, body.dark {
+  --background: #121212;
+  --foreground: #ffffff;
+  --card: #1e1e1e;
+  --card-foreground: #ffffff;
+  --popover: #1e1e1e;
+  --popover-foreground: #ffffff;
+  --primary: #ffffff;
+  --primary-foreground: #121212;
+  --secondary: #2a2a2a;
+  --secondary-foreground: #ffffff;
+  --muted: #2a2a2a;
+  --muted-foreground: #a1a1a1;
+  --accent: #2a2a2a;
+  --accent-foreground: #ffffff;
+  --destructive: #ef4444;
+  --border: rgba(255, 255, 255, 0.1);
+  --input: rgba(255, 255, 255, 0.15);
+  --ring: rgba(255, 255, 255, 0.2);
+  --chart-1: #64748b;
+  --chart-2: #94a3b8;
+  --chart-3: #cbd5e1;
+  --chart-4: #e2e8f0;
+  --chart-5: #f1f5f9;
+  --sidebar: #1e1e1e;
+  --sidebar-foreground: #ffffff;
+  --sidebar-primary: #64748b;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #2a2a2a;
+  --sidebar-accent-foreground: #ffffff;
+  --sidebar-border: rgba(255, 255, 255, 0.1);
+  --sidebar-ring: rgba(255, 255, 255, 0.2);
+}
+
+/* Dark Red theme overrides */
+.dark.theme-red, html.dark.theme-red, body.dark.theme-red {
+  --primary: #ff7a30;
+  --primary-foreground: #121212;
+  --secondary: #ff526a;
+  --secondary-foreground: #121212;
+  --accent: #ff6342;
+  --accent-foreground: #121212;
+  --ring: rgba(255, 122, 48, 0.3);
+  --chart-1: #ff7a30;
+  --chart-2: #ff6342;
+  --chart-3: #ff526a;
+  --chart-4: #f73f35;
+  --chart-5: #f42d4b;
+  --sidebar-primary: #ff7a30;
+  --sidebar-primary-foreground: #121212;
+  --sidebar-accent: #ff526a;
+  --sidebar-accent-foreground: #121212;
+}
+
+/* Dark Blue theme overrides */
+.dark.theme-blue, html.dark.theme-blue, body.dark.theme-blue {
+  --primary: #4d4bff;
+  --primary-foreground: #121212;
+  --secondary: #3634dd;
+  --secondary-foreground: #121212;
+  --accent: #6b68ff;
+  --accent-foreground: #121212;
+  --ring: rgba(77, 75, 255, 0.3);
+  --chart-1: #4d4bff;
+  --chart-2: #6b68ff;
+  --chart-3: #3634dd;
+  --chart-4: #8583ff;
+  --chart-5: #2f2cd8;
+  --sidebar-primary: #4d4bff;
+  --sidebar-primary-foreground: #121212;
+  --sidebar-accent: #3634dd;
+  --sidebar-accent-foreground: #121212;
+}
+
+/* Logo theme-specific styling */
+.theme-sensitive-logo .theme-red-elements {
+  display: none;
+}
+
+.theme-sensitive-logo .theme-blue-elements {
+  display: none;
+}
+
+:root.theme-red .theme-sensitive-logo .theme-red-elements {
+  display: block;
+}
+
+:root.theme-blue .theme-sensitive-logo .theme-blue-elements {
+  display: block;
+}
+
+/* Dark mode logo adjustments */
+.dark .theme-sensitive-logo path[fill="#000000"] {
+  fill: #ffffff;
+}
+
+html {
+  background-color: var(--background);
+  color: var(--foreground);
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  min-height: 100vh;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
