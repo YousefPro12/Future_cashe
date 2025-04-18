@@ -1,11 +1,13 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '../components/UI/card';
+import { useNavigate } from 'react-router-dom';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/UI/card';
 
 /**
  * Dashboard page component
  */
 const Dashboard = () => {
+  const navigate = useNavigate();
+  
   return (
     <div className="space-y-8">
       {/* Page header */}
@@ -17,18 +19,18 @@ const Dashboard = () => {
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
-          <Link 
-            to="/earn"
+          <button 
+            onClick={() => navigate('/earn')}
             className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground ring-offset-background transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
           >
             Earn Points
-          </Link>
-          <Link 
-            to="/rewards"
+          </button>
+          <button 
+            onClick={() => navigate('/rewards')}
             className="inline-flex items-center justify-center rounded-md bg-secondary px-4 py-2 text-sm font-medium text-secondary-foreground ring-offset-background transition-colors hover:bg-secondary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
           >
             Redeem Points
-          </Link>
+          </button>
         </div>
       </div>
 
@@ -121,12 +123,12 @@ const Dashboard = () => {
           </div>
         </CardContent>
         <CardFooter>
-          <Link 
-            to="/activity"
+          <button 
+            onClick={() => navigate('/activity')}
             className="text-sm text-primary hover:underline"
           >
             View all activity →
-          </Link>
+          </button>
         </CardFooter>
       </Card>
     </div>

@@ -1,11 +1,13 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
-import Logo from '../components/Logo';
+import { useNavigate } from 'react-router-dom';
+import Logo from '@/components/Logo';
 
 /**
  * Home page component
  */
 const Home = () => {
+  const navigate = useNavigate();
+  
   return (
     <div className="max-w-4xl mx-auto text-center">
       <div className="flex justify-center mb-6">
@@ -22,12 +24,12 @@ const Home = () => {
           <p className="text-muted-foreground mb-4">
             Earn points by completing sponsored offers from our partners.
           </p>
-          <Link 
-            to="/earn" 
+          <button 
+            onClick={() => navigate('/earn')}
             className="text-primary hover:underline inline-block"
           >
             View Offers →
-          </Link>
+          </button>
         </div>
         
         <div className="bg-card text-card-foreground p-6 rounded-lg shadow-sm border border-border">
@@ -35,12 +37,12 @@ const Home = () => {
           <p className="text-muted-foreground mb-4">
             Get rewarded for watching videos and advertisements.
           </p>
-          <Link 
-            to="/videos" 
+          <button 
+            onClick={() => navigate('/videos')}
             className="text-primary hover:underline inline-block"
           >
             Watch Videos →
-          </Link>
+          </button>
         </div>
         
         <div className="bg-card text-card-foreground p-6 rounded-lg shadow-sm border border-border">
@@ -48,28 +50,28 @@ const Home = () => {
           <p className="text-muted-foreground mb-4">
             Invite your friends and earn a bonus for each new user.
           </p>
-          <Link 
-            to="/referrals" 
+          <button 
+            onClick={() => navigate('/referrals')}
             className="text-primary hover:underline inline-block"
           >
             Refer Friends →
-          </Link>
+          </button>
         </div>
       </div>
       
       <div className="flex justify-center gap-4">
-        <Link 
-          to="/earn" 
+        <button 
+          onClick={() => navigate('/earn')}
           className="bg-primary text-primary-foreground hover:bg-primary/90 px-6 py-3 rounded-md font-medium"
         >
           Get Started
-        </Link>
-        <Link 
-          to="/about" 
+        </button>
+        <button 
+          onClick={() => navigate('/about')}
           className="bg-secondary text-secondary-foreground hover:bg-secondary/90 px-6 py-3 rounded-md font-medium"
         >
           Learn More
-        </Link>
+        </button>
       </div>
     </div>
   );

@@ -1,5 +1,5 @@
 import React from 'react';
-import { OfferWallsView } from '../components/Offerwalls';
+import { OfferWallsView } from '@/components/Offerwalls';
 
 /**
  * Earn page component

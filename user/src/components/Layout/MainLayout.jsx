@@ -1,12 +1,18 @@
 import React from 'react';
-import ThemeSwitcher from '../ThemeSwitcher';
-import Logo from '../Logo';
-import { Link, Outlet } from 'react-router-dom';
+import { useNavigate, Outlet } from 'react-router-dom';
+import ThemeSwitcher from '@/components/ThemeSwitcher';
+import Logo from '@/components/Logo';
 
 /**
  * Main layout component for the application
  */
-const MainLayout = () => {
+const MainLayout = ({ children }) => {
+  const navigate = useNavigate();
+  
+  const goTo = (path) => {
+    navigate(path);
+  };
+  
   return (
     <div className="min-h-screen flex flex-col bg-background text-foreground">
       {/* Header */}
@@ -14,28 +20,46 @@ const MainLayout = () => {
         <div className="container mx-auto px-4 py-3 flex justify-between items-center">
           <div className="flex items-center space-x-2">
             {/* Logo - automatically changes based on theme */}
-            <Link to="/" className="flex items-center">
-              <Logo size="sm" />
-            </Link>
+            <button 
+              className="flex items-center" 
+              onClick={() => goTo('/')}
+            >
+              <Logo size="small" />
+            </button>
           </div>
           
           {/* Navigation links */}
           <nav className="hidden md:flex items-center space-x-6">
-            <Link to="/dashboard" className="text-foreground hover:text-primary transition-colors">
+            <button 
+              onClick={() => goTo('/dashboard')} 
+              className="text-foreground hover:text-primary transition-colors"
+            >
               Dashboard
-            </Link>
-            <Link to="/earn" className="text-foreground hover:text-primary transition-colors">
+            </button>
+            <button 
+              onClick={() => goTo('/earn')} 
+              className="text-foreground hover:text-primary transition-colors"
+            >
               Earn
-            </Link>
-            <Link to="/videos" className="text-foreground hover:text-primary transition-colors">
+            </button>
+            <button 
+              onClick={() => goTo('/videos')} 
+              className="text-foreground hover:text-primary transition-colors"
+            >
               Videos
-            </Link>
-            <Link to="/rewards" className="text-foreground hover:text-primary transition-colors">
+            </button>
+            <button 
+              onClick={() => goTo('/rewards')} 
+              className="text-foreground hover:text-primary transition-colors"
+            >
               Rewards
-            </Link>
-            <Link to="/referrals" className="text-foreground hover:text-primary transition-colors">
+            </button>
+            <button 
+              onClick={() => goTo('/referrals')} 
+              className="text-foreground hover:text-primary transition-colors"
+            >
               Referrals
-            </Link>
+            </button>
           </nav>
           
           {/* Right side controls */}
@@ -57,7 +81,7 @@ const MainLayout = () => {
       
       {/* Main content - uses Outlet from react-router */}
       <main className="flex-grow container mx-auto px-4 py-8">
-        <Outlet />
+        {children || <Outlet />}
       </main>
       
       {/* Footer */}
@@ -66,7 +90,9 @@ const MainLayout = () => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div>
               <div className="mb-4">
-                <Logo size="sm" />
+                <button onClick={() => goTo('/')}>
+                  <Logo size="small" />
+                </button>
               </div>
               <p className="text-muted-foreground">
                 Earn rewards by completing offers, watching videos, and referring friends.
@@ -77,24 +103,44 @@ const MainLayout = () => {
               <h3 className="text-lg font-semibold mb-4">Quick Links</h3>
               <ul className="space-y-2">
                 <li>
-                  <Link to="/dashboard" className="text-muted-foreground hover:text-primary transition-colors">
+                  <button 
+                    onClick={() => goTo('/dashboard')} 
+                    className="text-muted-foreground hover:text-primary transition-colors"
+                  >
                     Dashboard
-                  </Link>
+                  </button>
                 </li>
                 <li>
-                  <Link to="/earn" className="text-muted-foreground hover:text-primary transition-colors">
+                  <button 
+                    onClick={() => goTo('/earn')} 
+                    className="text-muted-foreground hover:text-primary transition-colors"
+                  >
                     Earn
-                  </Link>
+                  </button>
                 </li>
                 <li>
-                  <Link to="/videos" className="text-muted-foreground hover:text-primary transition-colors">
+                  <button 
+                    onClick={() => goTo('/videos')} 
+                    className="text-muted-foreground hover:text-primary transition-colors"
+                  >
                     Videos
-                  </Link>
+                  </button>
                 </li>
                 <li>
-                  <Link to="/rewards" className="text-muted-foreground hover:text-primary transition-colors">
+                  <button 
+                    onClick={() => goTo('/rewards')} 
+                    className="text-muted-foreground hover:text-primary transition-colors"
+                  >
                     Rewards
-                  </Link>
+                  </button>
+                </li>
+                <li>
+                  <button 
+                    onClick={() => goTo('/api-test')} 
+                    className="text-muted-foreground hover:text-primary transition-colors"
+                  >
+                    API Test
+                  </button>
                 </li>
               </ul>
             </div>
@@ -103,24 +149,36 @@ const MainLayout = () => {
               <h3 className="text-lg font-semibold mb-4">Support</h3>
               <ul className="space-y-2">
                 <li>
-                  <Link to="/help" className="text-muted-foreground hover:text-primary transition-colors">
+                  <button 
+                    onClick={() => goTo('/help')} 
+                    className="text-muted-foreground hover:text-primary transition-colors"
+                  >
                     Help Center
-                  </Link>
+                  </button>
                 </li>
                 <li>
-                  <Link to="/contact" className="text-muted-foreground hover:text-primary transition-colors">
+                  <button 
+                    onClick={() => goTo('/contact')} 
+                    className="text-muted-foreground hover:text-primary transition-colors"
+                  >
                     Contact Us
-                  </Link>
+                  </button>
                 </li>
                 <li>
-                  <Link to="/terms" className="text-muted-foreground hover:text-primary transition-colors">
+                  <button 
+                    onClick={() => goTo('/terms')} 
+                    className="text-muted-foreground hover:text-primary transition-colors"
+                  >
                     Terms of Service
-                  </Link>
+                  </button>
                 </li>
                 <li>
-                  <Link to="/privacy" className="text-muted-foreground hover:text-primary transition-colors">
+                  <button 
+                    onClick={() => goTo('/privacy')} 
+                    className="text-muted-foreground hover:text-primary transition-colors"
+                  >
                     Privacy Policy
-                  </Link>
+                  </button>
                 </li>
               </ul>
             </div>

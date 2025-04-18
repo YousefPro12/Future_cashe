@@ -1,63 +1,51 @@
-import * as React from "react"
-import { cva } from "class-variance-authority";
+import React from "react";
+import { cn } from "../../lib/utils";
+import { AlertCircle, AlertTriangle, InfoIcon, CheckCircle } from "lucide-react";
 
-import { cn } from "@/lib/utils"
+const Alert = React.forwardRef(({ 
+  className, 
+  variant = "default", 
+  children, 
+  icon,
+  ...props 
+}, ref) => {
+  const variantClasses = {
+    default: "bg-blue-50 text-blue-800 border-blue-200 dark:bg-blue-950 dark:border-blue-900 dark:text-blue-200",
+    destructive: "bg-red-50 text-red-800 border-red-200 dark:bg-red-950 dark:border-red-900 dark:text-red-200",
+    warning: "bg-yellow-50 text-yellow-800 border-yellow-200 dark:bg-yellow-950 dark:border-yellow-900 dark:text-yellow-200",
+    success: "bg-green-50 text-green-800 border-green-200 dark:bg-green-950 dark:border-green-900 dark:text-green-200"
+  };
 
-const alertVariants = cva(
-  "relative w-full rounded-lg border px-4 py-3 text-sm grid has-[>svg]:grid-cols-[calc(var(--spacing)*4)_1fr] grid-cols-[0_1fr] has-[>svg]:gap-x-3 gap-y-0.5 items-start [&>svg]:size-4 [&>svg]:translate-y-0.5 [&>svg]:text-current",
-  {
-    variants: {
-      variant: {
-        default: "bg-card text-card-foreground",
-        destructive:
-          "text-destructive bg-card [&>svg]:text-current *:data-[slot=alert-description]:text-destructive/90",
-      },
-    },
-    defaultVariants: {
-      variant: "default",
-    },
-  }
-)
+  const defaultIcons = {
+    default: <InfoIcon className="h-4 w-4" />,
+    destructive: <AlertCircle className="h-4 w-4" />,
+    warning: <AlertTriangle className="h-4 w-4" />,
+    success: <CheckCircle className="h-4 w-4" />
+  };
 
-function Alert({
-  className,
-  variant,
-  ...props
-}) {
+  const IconComponent = icon || defaultIcons[variant];
+
   return (
     <div
-      data-slot="alert"
+      ref={ref}
       role="alert"
-      className={cn(alertVariants({ variant }), className)}
-      {...props} />
-  );
-}
-
-function AlertTitle({
-  className,
-  ...props
-}) {
-  return (
-    <div
-      data-slot="alert-title"
-      className={cn("col-start-2 line-clamp-1 min-h-4 font-medium tracking-tight", className)}
-      {...props} />
-  );
-}
-
-function AlertDescription({
-  className,
-  ...props
-}) {
-  return (
-    <div
-      data-slot="alert-description"
       className={cn(
-        "text-muted-foreground col-start-2 grid justify-items-start gap-1 text-sm [&_p]:leading-relaxed",
+        "relative flex w-full items-center gap-3 rounded-md border p-4 text-sm",
+        variantClasses[variant],
         className
       )}
-      {...props} />
+      {...props}
+    >
+      {IconComponent && (
+        <div className="flex-shrink-0">
+          {IconComponent}
+        </div>
+      )}
+      <div className="flex-1">{children}</div>
+    </div>
   );
-}
+});
 
-export { Alert, AlertTitle, AlertDescription }
+Alert.displayName = "Alert";
+
+export { Alert };
