@@ -1,119 +1,37 @@
-import { lazy, Suspense } from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { Provider } from 'react-redux';
+import { lazy, Suspense, useEffect } from 'react';
+import { BrowserRouter as Router } from 'react-router-dom';
+import { Provider, useDispatch } from 'react-redux';
 import store from './store';
+import AppRouter from './Router';
+import { setAuthStateFromStorage } from './store/slices/authSlice';
 
-// Layout components
-import MainLayout from './components/Layout/MainLayout';
+// Logo component
 import Logo from './components/Logo';
 
-// Pages
-const Home = lazy(() => import('./pages/Home'));
-const Login = lazy(() => import('./pages/Login'));
-const Register = lazy(() => import('./pages/Register'));
-const ForgotPassword = lazy(() => import('./pages/ForgotPassword'));
-const ResetPassword = lazy(() => import('./pages/ResetPassword'));
-const VerifyEmail = lazy(() => import('./pages/VerifyEmail'));
-const Dashboard = lazy(() => import('./pages/Dashboard'));
-const NotFound = lazy(() => import('./pages/NotFound'));
-
-// Auth guard for protected routes
-const ProtectedRoute = ({ children }) => {
-  const isAuthenticated = !!localStorage.getItem('auth_token');
+// App inner component that can use Redux hooks
+const AppContent = () => {
+  const dispatch = useDispatch();
   
-  if (!isAuthenticated) {
-    return <Navigate to="/login" replace />;
-  }
+  // Check auth status on app startup
+  useEffect(() => {
+    dispatch(setAuthStateFromStorage());
+  }, [dispatch]);
   
-  return children;
-};
-
-// Public route - redirects to dashboard if already logged in
-const PublicRoute = ({ children }) => {
-  const isAuthenticated = !!localStorage.getItem('auth_token');
-  
-  if (isAuthenticated) {
-    return <Navigate to="/dashboard" replace />;
-  }
-  
-  return children;
+  return (
+    <Suspense fallback={<div className="flex h-screen items-center justify-center">
+      <Logo size="medium" />
+    </div>}>
+      <AppRouter />
+    </Suspense>
+  );
 };
 
 function App() {
   return (
     <Provider store={store}>
-      <BrowserRouter>
-        <Suspense fallback={<div className="flex h-screen items-center justify-center">Loading...</div>}>
-          <Routes>
-            {/* Public routes */}
-            <Route 
-              path="/" 
-              element={
-                <MainLayout>
-                  <Home />
-                </MainLayout>
-              } 
-            />
-            
-            {/* Auth routes */}
-            <Route 
-              path="/login" 
-              element={
-                <PublicRoute>
-                  <Login />
-                </PublicRoute>
-              } 
-            />
-            <Route 
-              path="/register" 
-              element={
-                <PublicRoute>
-                  <Register />
-                </PublicRoute>
-              } 
-            />
-            <Route 
-              path="/forgot-password" 
-              element={
-                <PublicRoute>
-                  <ForgotPassword />
-                </PublicRoute>
-              } 
-            />
-            <Route 
-              path="/reset-password" 
-              element={
-                <PublicRoute>
-                  <ResetPassword />
-                </PublicRoute>
-              } 
-            />
-            <Route 
-              path="/verify-email" 
-              element={
-                <PublicRoute>
-                  <VerifyEmail />
-                </PublicRoute>
-              } 
-            />
-            
-            {/* Protected routes */}
-            <Route 
-              path="/dashboard/*" 
-              element={
-                <ProtectedRoute>
-                  <MainLayout>
-                    <Dashboard />
-                  </MainLayout>
-                </ProtectedRoute>
-              } 
-            />
-            
-            {/* 404 route */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </Suspense>
-      </BrowserRouter>
+      <Router>
+        <AppContent />
+      </Router>
     </Provider>
   );
 }

@@ -26,8 +26,11 @@ api.interceptors.request.use(
 api.interceptors.response.use(
   (response) => response.data,
   (error) => {
-    // Handle session timeout/auth errors
-    if (error.response && error.response.status === 401) {
+    // Don't auto-redirect during login/registration flows
+    const isAuthEndpoint = error.config?.url?.includes('/auth/');
+    
+    // Handle session timeout/auth errors, but not for auth endpoints
+    if (error.response && error.response.status === 401 && !isAuthEndpoint) {
       // Clear local auth data and redirect to login
       localStorage.removeItem('auth_token');
       window.location.href = '/login';

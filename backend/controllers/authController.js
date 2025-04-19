@@ -3,6 +3,13 @@ const jwt = require('jsonwebtoken');
 const { v4: uuidv4 } = require('uuid');
 const { User, OtpCode } = require('../models');
 
+// Hash password function for consistent hashing across methods - ONLY USE FOR INITIAL HASHING
+// DO NOT USE THIS FUNCTION FOR PASSWORD COMPARISON - use bcrypt.compare() directly
+const hashPassword = async (password) => {
+  const salt = await bcrypt.genSalt(10);
+  return await bcrypt.hash(password, salt);
+};
+
 /**
  * Register a new user
  * @route POST /api/auth/register
@@ -17,17 +24,16 @@ exports.register = async (req, res) => {
       return res.status(400).json({ message: 'Email already in use' });
     }
 
-    // Hash password
-    const salt = await bcrypt.genSalt(10);
-    const password_hash = await bcrypt.hash(password, salt);
+    // Hash password using the common function
+    const password_hash = await hashPassword(password);
 
-    // Create new user
+    // Create new user with hashed password
     const user = await User.create({
       email,
       password_hash,
       fullname,
       account_status: 'active',
-      referral_code: uuidv4().substring(0, 8)
+      referral_code: referral_code || uuidv4().substring(0, 8)
     });
 
     // Check if user was referred
@@ -77,12 +83,14 @@ exports.login = async (req, res) => {
 
     // Find user
     const user = await User.findOne({ where: { email } });
+    
     if (!user) {
       return res.status(401).json({ message: 'Invalid email or password' });
     }
 
-    // Check password
-    const isMatch = await user.validatePassword(password);
+    // IMPORTANT: bcrypt.compare correctly verifies the password
+    // It extracts the salt from user.password_hash and compares properly
+    const isMatch = await bcrypt.compare(password, user.password_hash);
     if (!isMatch) {
       return res.status(401).json({ message: 'Invalid email or password' });
     }
@@ -241,9 +249,8 @@ exports.resetPassword = async (req, res) => {
       return res.status(400).json({ message: 'OTP has expired' });
     }
 
-    // Hash new password
-    const salt = await bcrypt.genSalt(10);
-    const password_hash = await bcrypt.hash(newPassword, salt);
+    // Hash new password using the common function
+    const password_hash = await hashPassword(newPassword);
 
     // Update password
     await user.update({ password_hash });

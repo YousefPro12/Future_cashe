@@ -1,5 +1,4 @@
 const { DataTypes } = require('sequelize');
-const bcrypt = require('bcryptjs');
 const { v4: uuidv4 } = require('uuid');
 
 module.exports = (sequelize) => {
@@ -59,20 +58,9 @@ module.exports = (sequelize) => {
         if (!user.referral_code) {
           user.referral_code = uuidv4().substring(0, 8);
         }
-        
-        // Hash the password before saving
-        if (user.password_hash) {
-          const salt = await bcrypt.genSalt(10);
-          user.password_hash = await bcrypt.hash(user.password_hash, salt);
-        }
       }
     }
   });
-
-  // Instance method to validate password
-  User.prototype.validatePassword = async function(password) {
-    return await bcrypt.compare(password, this.password_hash);
-  };
 
   // Associate models when other models are defined
   User.associate = (models) => {

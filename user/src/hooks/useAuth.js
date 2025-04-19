@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { login, register, logout, verifyEmail, forgotPassword, resetPassword } from '../store/slices/authSlice';
+import { login, register, logout, verifyEmail, forgotPassword, resetPassword, clearAuthError } from '../store/slices/authSlice';
 
 /**
  * Custom hook for authentication-related functionality
@@ -20,12 +20,17 @@ const useAuth = () => {
   const handleLogin = useCallback(
     async (credentials) => {
       try {
+        // Clear any existing errors first
+        dispatch(clearAuthError());
         const result = await dispatch(login(credentials)).unwrap();
-        // Navigate to dashboard on successful login
-        if (result.token) {
+        
+        // Only navigate if we have a token and user data
+        if (result.token && result.user) {
           navigate('/dashboard');
+          return result;
         }
-        return result;
+        
+        throw new Error('Invalid login response');
       } catch (error) {
         // Let component handle the error
         throw error;
@@ -138,6 +143,7 @@ const useAuth = () => {
     forgotPassword: handleForgotPassword,
     resetPassword: handleResetPassword,
     logout: handleLogout,
+    clearError: () => dispatch(clearAuthError()),
   };
 };
 
