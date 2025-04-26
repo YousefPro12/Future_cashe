@@ -1,44 +1,43 @@
 import { useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
-import useAuth from '../../hooks/useAuth';
+import useAuth from '@/hooks/useAuth';
 
 // Import UI components
-import { Button } from '../UI/button';
-import { Input } from '../UI/input';
-import { Alert } from '../UI/alert';
-import { Checkbox } from '../UI/checkbox';
+import { Button } from '@/components/UI/button';
+import { Input } from '@/components/UI/input';
+import { Alert } from '@/components/UI/alert';
+import { Checkbox } from '@/components/UI/checkbox';
+import { PasswordInput } from '@/components/UI/password-input';
 
-const SignupForm = () => {
+const SignupForm = ({ onSuccess }) => {
   const { register: registerUser, loading, error: authError } = useAuth();
-  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState(null);
   
   const { 
     register, 
     handleSubmit,
-    watch,
     control,
     formState: { errors } 
   } = useForm({
     defaultValues: {
       email: '',
       password: '',
-      confirmPassword: '',
       fullname: '',
-      referral_code: '',
       terms: false
     }
   });
 
-  // For password confirmation validation
-  const password = watch('password');
-
   const onSubmit = async (data) => {
     try {
       setError(null);
-      // Remove confirmPassword and terms from data before sending to API
-      const { confirmPassword, terms, ...registrationData } = data;
+      // Remove terms from data before sending to API
+      const { terms, ...registrationData } = data;
       await registerUser(registrationData);
+      
+      // Call onSuccess callback if provided
+      if (onSuccess && typeof onSuccess === 'function') {
+        onSuccess();
+      }
       // Redirect happens in the useAuth hook
     } catch (err) {
       // Local error handling
@@ -67,6 +66,7 @@ const SignupForm = () => {
             id="fullname"
             type="text"
             autoComplete="name"
+            placeholder="John Doe"
             {...register('fullname', {
               required: 'Full name is required',
               minLength: {
@@ -76,6 +76,7 @@ const SignupForm = () => {
             })}
             error={errors.fullname}
             disabled={loading}
+            className="w-full"
           />
           {errors.fullname && (
             <p className="text-red-500 text-xs mt-1">{errors.fullname.message}</p>
@@ -90,6 +91,7 @@ const SignupForm = () => {
             id="email"
             type="email"
             autoComplete="email"
+            placeholder="your.email@example.com"
             {...register('email', {
               required: 'Email is required',
               pattern: {
@@ -99,6 +101,7 @@ const SignupForm = () => {
             })}
             error={errors.email}
             disabled={loading}
+            className="w-full"
           />
           {errors.email && (
             <p className="text-red-500 text-xs mt-1">{errors.email.message}</p>
@@ -109,68 +112,27 @@ const SignupForm = () => {
           <label htmlFor="password" className="text-sm font-medium">
             Password
           </label>
-          <div className="relative">
-            <Input
-              id="password"
-              type={showPassword ? 'text' : 'password'}
-              autoComplete="new-password"
-              {...register('password', {
-                required: 'Password is required',
-                minLength: {
-                  value: 8,
-                  message: 'Password must be at least 8 characters'
-                },
-                pattern: {
-                  value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
-                  message: 'Password must include uppercase, lowercase, number and special character'
-                }
-              })}
-              error={errors.password}
-              disabled={loading}
-            />
-            <button
-              type="button"
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500"
-              onClick={() => setShowPassword(!showPassword)}
-            >
-              {showPassword ? 'Hide' : 'Show'}
-            </button>
-          </div>
+          <PasswordInput
+            id="password"
+            autoComplete="new-password"
+            placeholder="••••••••"
+            showStrengthIndicator={true}
+            {...register('password', {
+              required: 'Password is required',
+              minLength: {
+                value: 8,
+                message: 'Password must be at least 8 characters'
+              },
+              pattern: {
+                value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+                message: 'Password must include uppercase, lowercase, number and special character'
+              }
+            })}
+            disabled={loading}
+          />
           {errors.password && (
             <p className="text-red-500 text-xs mt-1">{errors.password.message}</p>
           )}
-        </div>
-
-        <div className="space-y-1">
-          <label htmlFor="confirmPassword" className="text-sm font-medium">
-            Confirm Password
-          </label>
-          <Input
-            id="confirmPassword"
-            type={showPassword ? 'text' : 'password'}
-            autoComplete="new-password"
-            {...register('confirmPassword', {
-              required: 'Please confirm your password',
-              validate: value => value === password || 'Passwords do not match'
-            })}
-            error={errors.confirmPassword}
-            disabled={loading}
-          />
-          {errors.confirmPassword && (
-            <p className="text-red-500 text-xs mt-1">{errors.confirmPassword.message}</p>
-          )}
-        </div>
-
-        <div className="space-y-1">
-          <label htmlFor="referral_code" className="text-sm font-medium">
-            Referral Code (Optional)
-          </label>
-          <Input
-            id="referral_code"
-            type="text"
-            {...register('referral_code')}
-            disabled={loading}
-          />
         </div>
 
         <div className="flex items-start space-x-2">
@@ -204,6 +166,10 @@ const SignupForm = () => {
         >
           {loading ? 'Creating Account...' : 'Create Account'}
         </Button>
+        
+        <p className="text-center text-xs text-muted-foreground">
+          By creating an account, you agree to our Terms of Service and Privacy Policy.
+        </p>
       </form>
     </>
   );

@@ -1,15 +1,15 @@
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import useAuth from '../../hooks/useAuth';
+import useAuth from '@/hooks/useAuth';
 
 // Import UI components
-import { Button } from '../UI/button';
-import { Input } from '../UI/input';
-import { Alert } from '../UI/alert';
+import { Button } from '@/components/UI/button';
+import { Input } from '@/components/UI/input';
+import { Alert } from '@/components/UI/alert';
+import { PasswordInput } from '@/components/UI/password-input';
 
-const LoginForm = () => {
+const LoginForm = ({ onSuccess }) => {
   const { login, loading, error: authError } = useAuth();
-  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState(null);
   
   const { 
@@ -27,6 +27,10 @@ const LoginForm = () => {
     try {
       setError(null);
       await login(data);
+      // Call the onSuccess callback if provided
+      if (onSuccess && typeof onSuccess === 'function') {
+        onSuccess();
+      }
       // Redirect happens in the useAuth hook
     } catch (err) {
       // Handle the error locally instead of relying on the auth state
@@ -55,6 +59,7 @@ const LoginForm = () => {
             id="email"
             type="email"
             autoComplete="email"
+            placeholder="your.email@example.com"
             {...register('email', {
               required: 'Email is required',
               pattern: {
@@ -64,6 +69,7 @@ const LoginForm = () => {
             })}
             error={errors.email}
             disabled={loading}
+            className="w-full"
           />
           {errors.email && (
             <p className="text-red-500 text-xs mt-1">{errors.email.message}</p>
@@ -74,32 +80,32 @@ const LoginForm = () => {
           <label htmlFor="password" className="text-sm font-medium">
             Password
           </label>
-          <div className="relative">
-            <Input
-              id="password"
-              type={showPassword ? 'text' : 'password'}
-              autoComplete="current-password"
-              {...register('password', {
-                required: 'Password is required',
-                minLength: {
-                  value: 6,
-                  message: 'Password must be at least 6 characters'
-                }
-              })}
-              error={errors.password}
-              disabled={loading}
-            />
-            <button
-              type="button"
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500"
-              onClick={() => setShowPassword(!showPassword)}
-            >
-              {showPassword ? 'Hide' : 'Show'}
-            </button>
-          </div>
+          <PasswordInput
+            id="password"
+            autoComplete="current-password"
+            placeholder="••••••••"
+            showStrengthIndicator={false}
+            {...register('password', {
+              required: 'Password is required',
+              minLength: {
+                value: 6,
+                message: 'Password must be at least 6 characters'
+              }
+            })}
+            disabled={loading}
+          />
           {errors.password && (
             <p className="text-red-500 text-xs mt-1">{errors.password.message}</p>
           )}
+        </div>
+
+        <div className="flex justify-end">
+          <button 
+            type="button" 
+            className="text-sm text-primary hover:underline"
+          >
+            Forgot password?
+          </button>
         </div>
 
         <Button 
