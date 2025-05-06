@@ -16,6 +16,7 @@ const VerifyEmail = lazy(() => import('./pages/VerifyEmail'));
 const Dashboard = lazy(() => import('./pages/Dashboard'));
 const NotFound = lazy(() => import('./pages/NotFound'));
 const Earn = lazy(() => import('./pages/Earn'));
+const Profile = lazy(() => import('./pages/Profile'));
 
 /**
  * Auth guard - redirects to login if not authenticated
@@ -103,6 +104,14 @@ const AppRouter = () => {
         </ProtectedRoute>
       } />
       
+      <Route path="/profile" element={
+        <ProtectedRoute>
+          <MainLayout>
+            <Profile />
+          </MainLayout>
+        </ProtectedRoute>
+      } />
+      
       {/* Add routes for all main navigation items */}
       {Object.values(routes)
         .filter(route => !['dashboard', 'earn'].includes(route.path.replace('/', '')))
@@ -131,4 +140,4 @@ const AppRouter = () => {
   );
 };
 
-export default AppRouter; 
+export default AppRouter;

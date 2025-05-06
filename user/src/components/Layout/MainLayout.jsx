@@ -17,10 +17,32 @@ const MainLayout = ({ children }) => {
   const [isAccountMenuOpen, setIsAccountMenuOpen] = useState(false);
   const [showLoginPopup, setShowLoginPopup] = useState(false);
   const [showSignupPopup, setShowSignupPopup] = useState(false);
+  const [redirectPath, setRedirectPath] = useState('');
   
   const goTo = (path) => {
     setIsAccountMenuOpen(false);
-    navigate(path);
+    
+    // If user is not authenticated and trying to access protected routes, show login popup
+    if (!isAuthenticated && isProtectedRoute(path)) {
+      setRedirectPath(path);
+      setShowLoginPopup(true);
+    } else {
+      navigate(path);
+    }
+  };
+  
+  // Check if a route should be protected
+  const isProtectedRoute = (path) => {
+    // Add all routes that should require authentication
+    const protectedPaths = [
+      routes.dashboard.path,
+      routes.earn.path,
+      routes.videos.path,
+      routes.rewards.path,
+      routes.referrals.path
+    ];
+    
+    return protectedPaths.some(protectedPath => path.startsWith(protectedPath));
   };
   
   const handleLogout = () => {
@@ -36,6 +58,18 @@ const MainLayout = ({ children }) => {
   // Get main navigation items
   const navItems = mainNavRoutes.map(key => routes[key]);
   
+  // Add profile button for authenticated users
+  const displayNavItems = isAuthenticated 
+    ? [
+        ...navItems,
+        // Add profile button after the existing nav items (which includes referrals)
+        { 
+          path: '/profile', 
+          label: 'Profile'
+        }
+      ] 
+    : navItems;
+  
   // Get support navigation items
   const supportItems = supportRoutes.map(key => routes[key]);
 
@@ -43,26 +77,32 @@ const MainLayout = ({ children }) => {
   const handleAuthSuccess = () => {
     setShowLoginPopup(false);
     setShowSignupPopup(false);
+    
+    // Navigate to the stored path after successful login
+    if (redirectPath) {
+      navigate(redirectPath);
+      setRedirectPath('');
+    }
   };
   
   return (
     <div className="min-h-screen flex flex-col bg-background text-foreground">
       {/* Header */}
-      <header className="border-b border-border sticky top-0 z-10 bg-background">
-        <div className="container mx-auto px-4 py-3 flex justify-between items-center">
-          <div className="flex items-center space-x-2">
+      <header className="border-b border-border sticky top-0 z-10 bg-[rgb(241,231,231)] dark:bg-background">
+        <div className="container mx-auto px-4 py-3 flex items-center">
+          <div className="flex items-center space-x-2 mr-8">
             {/* Logo - automatically changes based on theme */}
             <button 
               className="flex items-center" 
               onClick={() => goTo('/')}
             >
-              <Logo size="small" />
+              <Logo size="large" />
             </button>
           </div>
           
-          {/* Navigation links */}
-          <nav className="hidden md:flex items-center space-x-6">
-            {navItems.map((item) => (
+          {/* Navigation links - shifted to the left */}
+          <nav className="hidden md:flex items-center space-x-6 mr-auto">
+            {displayNavItems.map((item) => (
               <button 
                 key={item.path}
                 onClick={() => goTo(item.path)} 
@@ -214,16 +254,17 @@ const MainLayout = ({ children }) => {
         </div>
       </footer>
 
-      {/* Login Popup */}
+      {/* Login Popup */}-
       <Popup
         isOpen={showLoginPopup}
         onClose={() => setShowLoginPopup(false)}
-        title="Welcome Back"
+        title="Sign In to Continue"
         size="md"
+        animation="slide"
       >
         <div className="p-4">
           <div className="mb-4 text-center">
-            <p className="text-muted-foreground">Sign in to your account to continue</p>
+            <p className="text-muted-foreground">Sign in to your account to access this feature</p>
           </div>
           <LoginForm onSuccess={handleAuthSuccess} />
           <div className="mt-6 text-center">
@@ -246,6 +287,7 @@ const MainLayout = ({ children }) => {
         onClose={() => setShowSignupPopup(false)}
         title="Create Your Account"
         size="md"
+        animation="slide"
       >
         <div className="p-4">
           <div className="mb-4 text-center">
@@ -269,4 +311,4 @@ const MainLayout = ({ children }) => {
   );
 };
 
-export default MainLayout; 
+export default MainLayout;

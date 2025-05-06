@@ -29,10 +29,8 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-
-
-
-
+// Initialize scheduler for background tasks
+initScheduler();
 
 // API routes
 app.get('/api/status', (req, res) => {

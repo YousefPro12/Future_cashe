@@ -12,21 +12,35 @@ const { Op } = require('sequelize');
  */
 exports.getReferralInfo = async (req, res) => {
   try {
-    // Get referral settings from system settings
-    const settings = await SystemSetting.findAll({
-      where: {
-        key: {
-          [Op.like]: 'referral_%'
-        }
-      }
-    });
+    // Default settings in case database settings don't exist
+    let referralSettings = {
+      points_per_referral: '100',
+      min_activity_required: 'true',
+      points_per_offer: '10'
+    };
 
-    // Convert to key-value object
-    const referralSettings = settings.reduce((obj, setting) => {
-      const key = setting.key.replace('referral_', '');
-      obj[key] = setting.value;
-      return obj;
-    }, {});
+    try {
+      // Try to get referral settings from system settings
+      const settings = await SystemSetting.findAll({
+        where: {
+          setting_key: {
+            [Op.like]: 'referral_%'
+          }
+        }
+      });
+
+      // Convert to key-value object if settings exist
+      if (settings && settings.length > 0) {
+        referralSettings = settings.reduce((obj, setting) => {
+          const key = setting.setting_key.replace('referral_', '');
+          obj[key] = setting.setting_value;  // Make sure this is using setting_value, not value
+          return obj;
+        }, {});
+      }
+    } catch (settingsError) {
+      console.log('Settings not available, using defaults:', settingsError.message);
+      // Continue with default settings if there's an error
+    }
 
     // Get user's referral code and stats
     const user = await User.findByPk(req.user.id, {
@@ -56,11 +70,7 @@ exports.getReferralInfo = async (req, res) => {
       referral_link: referralLink,
       total_referrals: totalReferrals,
       total_earnings: totalEarnings,
-      program_info: {
-        points_per_referral: referralSettings.points_per_referral || '100',
-        min_activity_required: referralSettings.min_activity_required || 'true',
-        points_per_offer: referralSettings.points_per_offer || '10'
-      }
+      program_info: referralSettings
     });
   } catch (error) {
     console.error('Get referral info error:', error);
@@ -266,10 +276,10 @@ exports.createReferral = async (userId, referrerCode) => {
 
     // Get referral points from system settings
     const pointsSetting = await SystemSetting.findOne({
-      where: { key: 'referral_points_per_referral' }
+      where: { setting_key: 'referral_points_per_referral' }
     });
 
-    const pointsPerReferral = pointsSetting ? parseInt(pointsSetting.value, 10) : 100;
+    const pointsPerReferral = pointsSetting ? parseInt(pointsSetting.setting_value, 10) : 100;
 
     // Create new referral
     const referral = await Referral.create({
@@ -316,10 +326,10 @@ exports.awardReferralPoints = async (userId, pointsEarned, activityType) => {
 
     // Get referral points percentage from system settings
     const percentageSetting = await SystemSetting.findOne({
-      where: { key: 'referral_points_percentage' }
+      where: { setting_key: 'referral_points_percentage' }
     });
 
-    const pointsPercentage = percentageSetting ? parseFloat(percentageSetting.value) : 0.1; // Default 10%
+    const pointsPercentage = percentageSetting ? parseFloat(percentageSetting.setting_value) : 0.1;
     const referralPointsEarned = Math.floor(pointsEarned * pointsPercentage);
 
     if (referralPointsEarned <= 0) {
@@ -356,4 +366,4 @@ exports.awardReferralPoints = async (userId, pointsEarned, activityType) => {
     console.error('Award referral points error:', error);
     throw error;
   }
-}; 
+};

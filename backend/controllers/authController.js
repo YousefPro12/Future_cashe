@@ -100,11 +100,17 @@ exports.login = async (req, res) => {
       return res.status(401).json({ message: 'Account is not active' });
     }
 
-    // Generate JWT token
+    // Check if JWT_SECRET is properly set
+    if (!process.env.JWT_SECRET) {
+      console.error('JWT_SECRET is not defined in environment variables');
+      return res.status(500).json({ message: 'Server configuration error' });
+    }
+
+    // Generate JWT token with default expiration if JWT_EXPIRES_IN is not set
     const token = jwt.sign(
       { id: user.id, email: user.email },
       process.env.JWT_SECRET,
-      { expiresIn: process.env.JWT_EXPIRES_IN }
+      { expiresIn: process.env.JWT_EXPIRES_IN || '24h' }
     );
 
     // Update user's IP and user agent
@@ -127,7 +133,7 @@ exports.login = async (req, res) => {
     });
   } catch (error) {
     console.error('Login error:', error);
-    res.status(500).json({ message: 'Server error during login' });
+    res.status(500).json({ message: 'Server error during login', error: error.message });
   }
 };
 
@@ -284,4 +290,4 @@ exports.getCurrentUser = async (req, res) => {
     console.error('Get current user error:', error);
     res.status(500).json({ message: 'Server error while getting user info' });
   }
-}; 
+};

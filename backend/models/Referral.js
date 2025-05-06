@@ -36,14 +36,19 @@ module.exports = (sequelize) => {
     tableName: 'referrals',
     timestamps: true,
     createdAt: 'created_at',
-    updatedAt: 'updated_at',
-    indexes: [
-      {
-        unique: true,
-        fields: ['referrer_id', 'referred_id']
-      }
-    ]
+    updatedAt: 'updated_at'
   });
+
+  Referral.associate = (models) => {
+    Referral.belongsTo(models.User, {
+      foreignKey: 'referrer_id',
+      as: 'referrer'
+    });
+    Referral.belongsTo(models.User, {
+      foreignKey: 'referred_id',
+      as: 'referred'
+    });
+  };
 
   return Referral;
 };

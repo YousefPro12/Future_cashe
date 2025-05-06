@@ -216,7 +216,7 @@ exports.getRedemptionHistory = async (req, res) => {
     const whereClause = {
       user_id: req.user.id
     };
-    
+    console.log(req.user.id);
     if (status) {
       whereClause.status = status;
     }

@@ -21,4 +21,7 @@ router.get('/:id', offerController.getOfferById);
 // Track offer click (before redirect)
 router.post('/:id/click', offerController.trackOfferClick);
 
-module.exports = router; 
+// Get offer completion history for current user
+router.get('/history', offerController.getOfferHistory);
+
+module.exports = router;

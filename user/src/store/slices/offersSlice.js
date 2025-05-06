@@ -50,19 +50,41 @@ export const trackOfferClick = createAsyncThunk(
   }
 );
 
+export const fetchOfferHistory = createAsyncThunk(
+  'offers/fetchHistory',
+  async (params, { rejectWithValue }) => {
+    try {
+      const response = await api.offers.getHistory(params);
+      return response;
+    } catch (error) {
+      return rejectWithValue(error.response?.data || { message: 'Failed to fetch offer history' });
+    }
+  }
+);
+
 // Initial state
 const initialState = {
   items: [],
   providers: [],
   currentOffer: null,
+  history: [],
   loading: {
     offers: false,
     providers: false,
     currentOffer: false,
     clicking: false,
+    history: false,
   },
   error: null,
   trackingUrl: null,
+  pagination: {
+    history: {
+      total: 0,
+      totalPages: 0,
+      currentPage: 1,
+      limit: 10
+    }
+  }
 };
 
 // Slice
@@ -136,9 +158,24 @@ const offersSlice = createSlice({
       .addCase(trackOfferClick.rejected, (state, action) => {
         state.loading.clicking = false;
         state.error = action.payload?.message || 'Failed to track offer click';
+      })
+      
+      // Fetch Offer History
+      .addCase(fetchOfferHistory.pending, (state) => {
+        state.loading.history = true;
+        state.error = null;
+      })
+      .addCase(fetchOfferHistory.fulfilled, (state, action) => {
+        state.loading.history = false;
+        state.history = action.payload.completions;
+        state.pagination.history = action.payload.pagination;
+      })
+      .addCase(fetchOfferHistory.rejected, (state, action) => {
+        state.loading.history = false;
+        state.error = action.payload?.message || 'Failed to fetch offer history';
       });
   },
 });
 
 export const { clearOffersError, clearCurrentOffer, clearTrackingUrl } = offersSlice.actions;
-export default offersSlice.reducer; 
+export default offersSlice.reducer;

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 
 /**
@@ -12,6 +12,7 @@ import { createPortal } from 'react-dom';
  * @param {string} props.size - Size of the popup (sm, md, lg, xl)
  * @param {boolean} props.closeOnOutsideClick - Whether to close the popup when clicking outside
  * @param {boolean} props.showCloseButton - Whether to show the close button
+ * @param {string} props.animation - Animation style ('fade', 'zoom', 'slide')
  */
 const Popup = ({
   isOpen,
@@ -21,8 +22,29 @@ const Popup = ({
   size = 'md',
   closeOnOutsideClick = true,
   showCloseButton = true,
+  animation = 'zoom',
 }) => {
   const popupRef = useRef(null);
+  const [isAnimating, setIsAnimating] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
+
+  // Handle animation states when opening/closing
+  useEffect(() => {
+    if (isOpen) {
+      setIsVisible(true);
+      // Small delay to ensure DOM is ready for animation
+      setTimeout(() => {
+        setIsAnimating(true);
+      }, 100);
+    } else {
+      setIsAnimating(false);
+      // Wait for animation to complete before hiding
+      const timer = setTimeout(() => {
+        setIsVisible(false);
+      }, 300); // Match this with CSS transition duration
+      return () => clearTimeout(timer);
+    }
+  }, [isOpen]);
 
   // Handle escape key press
   useEffect(() => {
@@ -79,13 +101,32 @@ const Popup = ({
     full: 'max-w-full',
   };
 
-  if (!isOpen) return null;
+  // Animation classes based on animation type
+  const getAnimationClasses = () => {
+    const baseClasses = 'transition-all duration-300 ease-in-out';
+    
+    switch (animation) {
+      case 'fade':
+        return `${baseClasses} ${isAnimating ? 'opacity-100' : 'opacity-0'}`;
+      case 'slide':
+        return `${baseClasses} ${isAnimating ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`;
+      case 'zoom':
+      default:
+        return `${baseClasses} ${isAnimating ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}`;
+    }
+  };
+
+  if (!isVisible) return null;
 
   return createPortal(
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+    <div 
+      className={`fixed inset-0 z-50 flex items-center justify-center transition-opacity duration-300 ${
+        isAnimating ? 'opacity-100' : 'opacity-0'
+      } bg-black/50 backdrop-blur-sm`}
+    >
       <div 
         ref={popupRef}
-        className={`${sizeClasses[size]} w-full bg-card rounded-lg shadow-xl border border-border p-4 m-4 max-h-[90vh] overflow-auto`}
+        className={`${sizeClasses[size]} ${getAnimationClasses()} w-full bg-card rounded-lg shadow-xl border border-border p-4 m-4 max-h-[90vh] overflow-auto`}
         role="dialog"
         aria-modal="true"
         aria-labelledby={title ? "popup-title" : undefined}
@@ -97,7 +138,7 @@ const Popup = ({
             {showCloseButton && (
               <button
                 onClick={onClose}
-                className="text-muted-foreground hover:text-foreground"
+                className="text-muted-foreground hover:text-foreground transition-colors"
                 aria-label="Close"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -119,4 +160,4 @@ const Popup = ({
   );
 };
 
-export default Popup; 
+export default Popup;

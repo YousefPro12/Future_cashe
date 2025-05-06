@@ -71,3 +71,20 @@ module.exports = (sequelize) => {
 
   return SystemSetting;
 };
+
+// Remove or comment out these example queries as they're causing the error
+// SystemSetting.findAll({
+//   where: {
+//     key: {
+//       [Op.like]: 'referral_%'
+//     }
+//   }
+// })
+
+// SystemSetting.findAll({
+//   where: {
+//     setting_key: {
+//       [Op.like]: 'referral_%'
+//     }
+//   }
+// })

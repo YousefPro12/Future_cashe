@@ -69,6 +69,7 @@ export const resetPassword = createAsyncThunk(
 // Initial state
 const initialState = {
   isAuthenticated: !!localStorage.getItem('auth_token'),
+  token: localStorage.getItem('auth_token') || null,
   user: null,
   loading: false,
   error: null,
@@ -86,10 +87,12 @@ const authSlice = createSlice({
     setAuthStateFromStorage: (state) => {
       const token = localStorage.getItem('auth_token');
       state.isAuthenticated = !!token;
+      state.token = token;
     },
     logout: (state) => {
       localStorage.removeItem('auth_token');
       state.isAuthenticated = false;
+      state.token = null;
       state.user = null;
     },
     clearAuthError: (state) => {
@@ -111,6 +114,7 @@ const authSlice = createSlice({
         state.loading = false;
         // Only set authenticated if we got a token
         state.isAuthenticated = !!action.payload.token;
+        state.token = action.payload.token || null;
         state.user = action.payload.user;
       })
       .addCase(login.rejected, (state, action) => {
@@ -180,4 +184,4 @@ const authSlice = createSlice({
 });
 
 export const { logout, clearAuthError, clearAuthStatus, setAuthStateFromStorage } = authSlice.actions;
-export default authSlice.reducer; 
+export default authSlice.reducer;

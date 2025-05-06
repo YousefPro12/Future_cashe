@@ -65,6 +65,7 @@ const endpoints = {
     getProviders: () => api.get('/offers/providers'),
     getById: (offerId) => api.get(`/offers/${offerId}`),
     trackClick: (offerId) => api.post(`/offers/${offerId}/click`),
+    getHistory: (params = {}) => api.get('/offers/history', { params }),
   },
   
   // Video related endpoints
@@ -106,4 +107,4 @@ const endpoints = {
   }
 };
 
-export default endpoints; 
+export default endpoints;
